@@ -18,13 +18,13 @@ class Person < Nameable
   def can_use_services?
     of_age? || parent_permission
   end
-  
+
   def correct_name
     @name
   end
-  
-    def add_rental(date, book)
-      rental = Rental.new(date, book, self)
-      @rentals << rental unless @rentals.includes?(rental)
-    end
+
+  def add_rental(date, book)
+    rental = Rental.new(date, book, self)
+    @rentals << rental unless @rentals.includes?(rental)
+  end
 end
