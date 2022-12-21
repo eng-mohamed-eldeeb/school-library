@@ -24,6 +24,6 @@ class Person < Nameable
   end
 
   def add_rental(date, book)
-    rental = Rental.new(date, book, self)
+    Rental.new(date, book, self)
   end
 end
