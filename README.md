@@ -73,6 +73,8 @@ puts student.play_hooky # prints "¯(ツ)/¯
 
 - [Mohamed Eldeeb](https://github.com/eng-mohamed-eldeeb)
 
+- [R. Mauricio Mendoza](https://github.com/rbreva) (only for refactory)
+
 ## 🔭 Future Features <a name="future-features"></a>
 
 - Add more methods and attributes to the Person and Student classes.
