@@ -12,10 +12,32 @@ class App
   attr_accessor :books, :people, :rentals
 
   def initialize
-    @people = []
-    @books = []
+    @people = loadPeople
+    @books = load_books
     @rentals = []
     @classroom = Classroom.new('1-A')
+  end
+
+  def load_books
+    return [] unless File.exist?('books.json')
+
+    books_json = JSON.parse(File.read('books.json'))
+    books_json.map do |book|
+      Book.new(book['title'], book['author'])
+    end
+  end
+
+  def loadPeople
+    return [] unless File.exist?('people.json')
+
+    people_json = JSON.parse(File.read('people.json'))
+    people_json.map do |per|
+      if defined?(per.specialization)
+        Teacher.new(per.specialization,per.age, per.name)
+      else
+        Student.new(per.age, @classroom, per.name, per.parent_permission)
+      end
+    end
   end
 
   def select_book
@@ -87,7 +109,7 @@ class App
     @people.each do |person|
       print '[Teacher] ' if person.is_a?(Teacher)
       print '[Student] ' if person.is_a?(Student)
-      puts "> Name: #{person.name}, ID: #{person.id}, Age: #{person.age}"
+      puts "> Name: #{person.name}, ID: #{person.id},permission: #{person.parent_permission} , Age: #{person.age}"
     end
   end
 
@@ -100,33 +122,34 @@ class App
   end
 
   def saveBooks
-    booksForSave = []
-    @books.each do |aBook| 
-      booksForSave.push([aBook.title, aBook.author])
-    end
-    booksInJsonFormat = JSON.parse("#{booksForSave}")
-    File.write('books.json', booksInJsonFormat)
+    # booksForSave = []
+    # @books.each do |aBook| 
+    #   booksForSave.push([aBook.title, aBook.author])
+    # end
+    # booksInJsonFormat = JSON.parse("#{booksForSave}")
+    # File.write('books.json', booksInJsonFormat)
+    p 'save books'
   end
 
 
   def savePeople
-    peopleForSave = []
-    @people.each do |person|
-      persontype = person.is_a?(Teacher) ? '[Teacher]' : '[Student]'
-      peopleForSave.push([person.name, person.id, person.age, person.is_a?(Teacher) ? "[Teacher, #{person.specialization}]" : "[Student"])
-    end
-    peoplsInJsonFormat = JSON.parse("#{peopleForSave}")
-    File.write('person.json', peoplsInJsonFormat)
+    File.open('people.json', 'w') do |file|
+      people = @people.each.map do |per|
+        { name: per.name,
+          age: per.age,
+          specialization: per.specialization,
+          parent_permission: per.parent_permission,
+          id: per.id }
+      end
+      file.write(JSON.generate(people))
   end
+end
   
   def saveRentals
-    rentalsForSave = []
-    @rentals.each do |rental|
-      rentalsForSave.push([rental.date, rental.person.id, book.title])
-      # p rental.date
-    end
-    rentalsInJsonFormat = JSON.parse("#{rentalsForSave}")
-    File.write('rentsl.json', rentalsInJsonFormat)
+    # p 'save rentals'
+    # end
+    # rentalsInJsonFormat = JSON.parse("#{rentalsForSave}")
+    # File.write('rentsl.json', rentalsInJsonFormat)
   end
 
 
