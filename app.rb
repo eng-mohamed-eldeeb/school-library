@@ -1,10 +1,12 @@
 require_relative 'book'
+require_relative 'rental'
 require_relative 'person'
 require_relative 'student'
 require_relative 'teacher'
 require_relative 'classroom'
 require_relative 'capitalize_decorator'
 require_relative 'trimmer_decorator'
+require 'json'
 
 class App
   attr_accessor :books, :people, :rentals
@@ -27,7 +29,7 @@ class App
   def select_person
     puts 'Select a person'
     @people.each_with_index do |person, index|
-      print "> #{index + 1}) #{person.is_a?(Teacher) ? '[Teacher]' : '[Student]'} "
+      print "> #{index}) #{person.is_a?(Teacher) ? '[Teacher]' : '[Student]'} "
       puts "> Name: #{person.name}, ID: #{person.id}, Age: #{person.age}"
     end
     gets.chomp.to_i
@@ -90,10 +92,42 @@ class App
   end
 
   def add_teacher(age, name, specialization)
-    @people.push(Teacher.new(age, specialization, name))
+    @people.push(Teacher.new( specialization,age, name))
   end
 
   def add_student(age, name, permission)
     @people.push(Student.new(age, @classroom, name, parent_permission: permission))
   end
+
+  def saveBooks
+    booksForSave = []
+    @books.each do |aBook| 
+      booksForSave.push([aBook.title, aBook.author])
+    end
+    booksInJsonFormat = JSON.parse("#{booksForSave}")
+    File.write('books.json', booksInJsonFormat)
+  end
+
+
+  def savePeople
+    peopleForSave = []
+    @people.each do |person|
+      persontype = person.is_a?(Teacher) ? '[Teacher]' : '[Student]'
+      peopleForSave.push([person.name, person.id, person.age, person.is_a?(Teacher) ? "[Teacher, #{person.specialization}]" : "[Student"])
+    end
+    peoplsInJsonFormat = JSON.parse("#{peopleForSave}")
+    File.write('person.json', peoplsInJsonFormat)
+  end
+  
+  def saveRentals
+    rentalsForSave = []
+    @rentals.each do |rental|
+      rentalsForSave.push([rental.date, rental.person.id, book.title])
+      # p rental.date
+    end
+    rentalsInJsonFormat = JSON.parse("#{rentalsForSave}")
+    File.write('rentsl.json', rentalsInJsonFormat)
+  end
+
+
 end

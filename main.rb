@@ -111,6 +111,9 @@ def run(app)
     when 6
       app.list_rentals_by_id
     else
+      app.saveBooks
+      app.savePeople
+      app.saveRentals
       puts '> Thanks for using this app!'
       return
     end
